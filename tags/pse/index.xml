@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on Personae Labs</title>
-    <link>https://personaelabs.org/posts/</link>
-    <description>Recent content in Posts on Personae Labs</description>
+    <title>PSE on Personae Labs</title>
+    <link>https://personaelabs.org/tags/pse/</link>
+    <description>Recent content in PSE on Personae Labs</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 10 Oct 2022 22:12:03 +0000</lastBuildDate><atom:link href="https://personaelabs.org/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 10 Oct 2022 22:12:03 +0000</lastBuildDate><atom:link href="https://personaelabs.org/tags/pse/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>In-person heyanon at SBC</title>
       <link>https://personaelabs.org/posts/sbcheyanon/</link>
@@ -15,16 +15,6 @@
       <guid>https://personaelabs.org/posts/sbcheyanon/</guid>
       <description>The Science of Blockchain Conference (SBC) was held in late August at Stanford University. It was the first major conference since we had launched heyanon.xyz, which meant it was time to hack on an idea I&amp;rsquo;ve had for a while: in-person groups!
 What&amp;rsquo;s heyanon? heyanon is an open-source app allowing users to anonymously tweet as a verified member of on and off-chain groups using ZKPs. In a world where users have to choose between the extremes of using their real-world identity or being fully pseudonymous, heyanon is working towards a future where you can select a subset of your identity and reputation to attach to your speech online.</description>
-    </item>
-    
-    <item>
-      <title>Introducing Personae Labs</title>
-      <link>https://personaelabs.org/posts/personae/</link>
-      <pubDate>Sun, 02 Oct 2022 22:12:03 +0000</pubDate>
-      
-      <guid>https://personaelabs.org/posts/personae/</guid>
-      <description>Introducing Personae Labs, an R&amp;amp;D lab investigating the future of human expression online. We believe that the availability of advanced cryptography in consumer devices and the rise of public social networks will completely alter the shape of digital society.
-Trend 1: publicly verifiable social networks Traditional digital social networks are not publicly verifiable. There’s no way to make a statement about your relationships in these networks that you know everyone will accept as true.</description>
     </item>
     
   </channel>
