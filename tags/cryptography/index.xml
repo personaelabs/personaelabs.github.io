@@ -6,11 +6,11 @@
     <description>Recent content in cryptography on Personae Labs</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 10 Nov 2022 22:12:03 +0000</lastBuildDate><atom:link href="https://personaelabs.org/tags/cryptography/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 30 Nov 2022 22:12:03 +0000</lastBuildDate><atom:link href="https://personaelabs.org/tags/cryptography/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Efficient ZK ECDSA (part 1)</title>
       <link>https://personaelabs.org/posts/efficient-ecdsa-1/</link>
-      <pubDate>Thu, 10 Nov 2022 22:12:03 +0000</pubDate>
+      <pubDate>Wed, 30 Nov 2022 22:12:03 +0000</pubDate>
       
       <guid>https://personaelabs.org/posts/efficient-ecdsa-1/</guid>
       <description>This is the first post of a 2 part series on our research improving private ECDSA signature verification, stemming from this ETHResearch post and implemented in this repository. In this post, we motivate our research and review our key insights. In the follow-up, we will provide a full security proof, discuss on-chain extensions, and introduce even faster implementations in proving systems like Halo2 and Nova.
