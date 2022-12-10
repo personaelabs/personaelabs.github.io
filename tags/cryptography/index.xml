@@ -13,8 +13,8 @@
       <pubDate>Wed, 30 Nov 2022 22:12:03 +0000</pubDate>
       
       <guid>https://personaelabs.org/posts/efficient-ecdsa-1/</guid>
-      <description>This is the first post of a 2 part series on our research improving private ECDSA signature verification, stemming from this ETHResearch post and implemented in this repository. In this post, we motivate our research and review our key insights. In the follow-up, we will provide a full security proof, discuss on-chain extensions, and introduce even faster implementations in proving systems like Halo2 and Nova.
-Motivation ECDSA &amp;amp; ring signatures Client-side proving Key insights Take computation out of the SNARK Precomputing point multiples Off-chain verification To keccak or not to keccak Next up Appendix: half client &amp;amp; half server models Elliptic curve interlude Proving setup Praise &amp;amp; criticism Looking to the future Motivation ECDSA &amp;amp; ring signatures The Elliptic Curve Digital Signature Algorithm, or ECDSA for short, is a key tool in the identity layer of blockchains like Ethereum and Bitcoin.</description>
+      <description>This is the first post of a two (maybe three?) part series on our research improving private ECDSA signature verification, stemming from this ETHResearch post and implemented in this repository. In this post, we motivate our research and review our key insights. In the follow-up, we will provide a full security proof, discuss on-chain extensions, and introduce even faster implementations in proving systems like Halo2 and Nova.
+There will be some math in this post!</description>
     </item>
     
   </channel>
