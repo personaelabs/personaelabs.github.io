@@ -319,7 +319,7 @@ $$</p>
 
 <p>which we substitute above to get</p>
 <p>$$ s * T + U = Q_a $$</p>
-<p>Because $T$ and $U$ are defined using $R$ and $m$, we can compute them outside of the SNARK and pass them in as public inputs. And so with this rewrite we only need to do 1 <code>Secp256k1ScalarMult</code> and 1 <code>Secp256k1AddUnequal</code> inside of the circuit. Okay, 3 operations cut! Is this progress?</p>
+<p>Because $T$ and $U$ are defined using $R$, $r$, and $m$, we can compute them outside of the SNARK and pass them in as public inputs. And so with this rewrite we only need to do 1 <code>Secp256k1ScalarMult</code> and 1 <code>Secp256k1AddUnequal</code> inside of the circuit. Okay, 3 operations cut! Is this progress?</p>
 <p>Unfortunately, this only cuts 100k constraints from the original 1.5mil constraint circuit, because <code>Secp256k1ScalarMult</code> is by far the most expensive operation. This is implemented as <code>ecdsa_verify_no_precompute</code> in this <a href="https://github.com/personaelabs/efficient-zk-ecdsa/blob/8477a39b5a3735724981cd99d19cf36ddb9e8c51/circuits/ecdsa_verify_no_precompute.circom">file</a> for reference. But hope is not lost yet! This rearranged equation is key for our next insight.</p>
 <h2 id="precomputing-point-multiples">Precomputing point multiples</h2>
 <p>The original 0xPARC code uses a clever optimization to speed up the <code>ECDSAPrivToPub</code> subroutine, which multiples the generator point $G$ by a scalar $a$. Because $G$ is known in advance, the code stores <em>precomputed multiples</em> of $G$ directly in the circuit to reduce the number of operations in <code>ECDSAPrivToPub</code>. The <a href="https://0xparc.org/blog/zk-ecdsa-2">0xPARC blog post</a> dives into this in more detail.</p>
