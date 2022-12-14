@@ -13,7 +13,7 @@
       <pubDate>Wed, 30 Nov 2022 22:12:03 +0000</pubDate>
       
       <guid>https://personaelabs.org/posts/efficient-ecdsa-1/</guid>
-      <description>This is the first post of a two (maybe three?) part series on our research improving private ECDSA signature verification, stemming from this ETHResearch post and implemented in this repository. In this post, we motivate our research and review our key insights. In the follow-up, we will provide a full security proof, discuss on-chain extensions, and introduce even faster implementations in proving systems like Halo2 and Nova.
+      <description>This is the first post of a multi-part series on our research improving private ECDSA signature verification, stemming from this ETHResearch post and implemented in this repository. In this post, we motivate our research and review our key insights. In the follow-up, we will provide a full security proof, discuss on-chain extensions, and introduce even faster implementations in proving systems like Halo2 and Nova.
 There will be some math in this post!</description>
     </item>
     
