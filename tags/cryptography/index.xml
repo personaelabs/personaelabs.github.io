@@ -6,11 +6,11 @@
     <description>Recent content in cryptography on Personae Labs</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 14 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://personaelabs.org/tags/cryptography/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 03 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://personaelabs.org/tags/cryptography/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Introducing Spartan-ecdsa</title>
       <link>https://personaelabs.org/posts/spartan-ecdsa/</link>
-      <pubDate>Sat, 14 Jan 2023 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 03 Feb 2023 00:00:00 +0000</pubDate>
       
       <guid>https://personaelabs.org/posts/spartan-ecdsa/</guid>
       <description>We introduce Spartan-ecdsa, which to our knowledge is the fastest open-source method to verify secp256k1 ECDSA signatures in zero-knowledge.
