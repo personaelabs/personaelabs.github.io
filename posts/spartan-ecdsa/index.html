@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+  <head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;700&family=Space+Mono&display=swap"
+  rel="stylesheet"
+/>
+<link rel="stylesheet" type="text/css" href="/css/style.css" />
+ 
+<title>Introducing Spartan-ecdsa</title>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css"
+  integrity="sha384-Juol1FqnotbkyZUT5Z7gUPjQ9gzlwCENvUZTpQBAPxtusdwFLRy382PSDx5UUJ4/"
+  crossorigin="anonymous"
+/>
+
+
+<script
+  defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.js"
+  integrity="sha384-97gW6UIJxnlKemYavrqDHSX3SiygeOwIZhwyOKRfSaf0JWKRVj9hLASHgFTzT+0O"
+  crossorigin="anonymous"
+></script>
+
+
+<script
+  defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/contrib/auto-render.min.js"
+  integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"
+  crossorigin="anonymous"
+  onload="renderMathInElement(document.body);"
+></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+      ],
+    });
+  });
+</script>
+
+
+    <meta property="og:url" content="https://personaelabs.org/posts/spartan-ecdsa/" />
+    <meta
+      property="og:title"
+      content="Introducing Spartan-ecdsa"
+    />
+    <meta property="og:description" content="We introduce Spartan-ecdsa, which to our knowledge is the fastest open-source method to verify secp256k1 ECDSA signatures in zero-knowledge.
+Right-field arithmetic Tricks from efficient-zk-ecdsa Benchmarks Public key group membership proof Ethereum address group membership proof Future work Speeding up Keccak On-chain verification Appendix 1: Under the hood Upstream dependencies Our implementations Appendix 2: Secp/Secq cycle in Sage Spartan-ecdsa is based on the Spartan Non-Interactive Zero-knowledge Proof (SpartanNIZK), which is a proving system in the Spartan zkSNARKs family." />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Introducing Spartan-ecdsa"
+    />
+    <meta name="twitter:description" content="We introduce Spartan-ecdsa, which to our knowledge is the fastest open-source method to verify secp256k1 ECDSA signatures in zero-knowledge.
+Right-field arithmetic Tricks from efficient-zk-ecdsa Benchmarks Public key group membership proof Ethereum address group membership proof Future work Speeding up Keccak On-chain verification Appendix 1: Under the hood Upstream dependencies Our implementations Appendix 2: Secp/Secq cycle in Sage Spartan-ecdsa is based on the Spartan Non-Interactive Zero-knowledge Proof (SpartanNIZK), which is a proving system in the Spartan zkSNARKs family." />
+    <meta name="twitter:site" content="@personaelabs" />
+
+     
+    <meta
+      property="og:image"
+      content="https://personaelabs.org/media/default-preview.jpg"
+    />
+    <meta
+      name="twitter:image"
+      content="https://personaelabs.org/media/default-preview.jpg"
+    />
+    
+  </head>
+  <body>
+    <main><div id="nav-border" class="container">
+    <nav id="nav" class="nav justify-content-center">
+        
+         <a class="nav-link" href="/">
+        
+        
+        
+        <i data-feather="home"></i> 
+        
+        
+        Home
+        </a>
+        
+         <a class="nav-link" href="/posts/">
+        
+        
+        
+        <i data-feather="pen-tool"></i> 
+        
+        
+        Posts
+        </a>
+        
+         <a class="nav-link" href="https://github.com/personaelabs">
+        
+        
+        
+        <i data-feather="github"></i> 
+        
+        
+        GitHub
+        </a>
+        
+         <a class="nav-link" href="https://discord.gg/ZVWhZrbkRV">
+        
+        
+        
+        <i data-feather="discord"></i> 
+        
+        
+        Discord
+        </a>
+        
+    </nav>
+</div><div>
+        <div id="content">
+<h1>Introducing Spartan-ecdsa</h1>
+<span> by <b>  Personae  </b> on </span>
+ 
+<i data-feather="calendar"></i>
+<time datetime="2023-01-14">Jan 14, 2023</time>
+
+<i data-feather="tag"></i>
+ 
+<a class="btn btn-sm btn-outline-dark tag-btn" href="https://personaelabs.org/tags/cryptography">cryptography</a>
+ 
+ <br /><br />
+<p>We introduce <a href="https://github.com/personaelabs/spartan-ecdsa">Spartan-ecdsa</a>, which to our knowledge is the fastest open-source method to verify secp256k1 ECDSA signatures in zero-knowledge.</p>
+<div><nav id="TableOfContents">
+  <ul>
+    <li><a href="#right-field-arithmetic">Right-field arithmetic</a>
+      <ul>
+        <li><a href="#tricks-from-efficient-zk-ecdsa">Tricks from efficient-zk-ecdsa</a></li>
+      </ul>
+    </li>
+    <li><a href="#benchmarks">Benchmarks</a>
+      <ul>
+        <li><a href="#public-key-group-membership-proof">Public key group membership proof</a></li>
+        <li><a href="#ethereum-address-group-membership-proof">Ethereum address group membership proof</a></li>
+      </ul>
+    </li>
+    <li><a href="#future-work">Future work</a>
+      <ul>
+        <li><a href="#speeding-up-keccak">Speeding up Keccak</a></li>
+        <li><a href="#on-chain-verification">On-chain verification</a></li>
+      </ul>
+    </li>
+    <li><a href="#appendix-1-under-the-hood">Appendix 1: Under the hood</a>
+      <ul>
+        <li><a href="#upstream-dependencies">Upstream dependencies</a></li>
+        <li><a href="#our-implementations">Our implementations</a></li>
+      </ul>
+    </li>
+    <li><a href="#appendix-2-secpsecq-cycle-in-sage">Appendix 2: Secp/Secq cycle in Sage</a></li>
+  </ul>
+</nav></div>
+
+<p>Spartan-ecdsa is based on the <a href="https://eprint.iacr.org/2019/550">Spartan Non-Interactive Zero-knowledge Proof (SpartanNIZK)</a>, which is a proving system in the Spartan zkSNARKs family. Spartan is a family of prover and verifier efficient zkSNARKs for proving R1CS satisfiability, developed by <a href="https://twitter.com/srinathtv">Srinath Setty</a>. SpartanNIZK doesn’t require a trusted setup, and most importantly in the case of ECDSA verification, <strong>can work with on elliptic curve where discrete log holds</strong>.</p>
+<p>This is uncommon in other popular elliptic curve based zkSNARK proof systems. For example, <a href="https://xn--2-umb.com/22/groth16/">Groth16</a> and PSE&rsquo;s <a href="https://github.com/privacy-scaling-explorations/halo2">fork of Halo2</a> require pairing-friendly curves like BN254. Zcash&rsquo;s original <a href="https://github.com/zcash/halo2">Halo2</a> uses IPA and doesn&rsquo;t need pairing-friendly curves, but the scalar field of the curve must have <a href="https://electriccoin.co/blog/the-pasta-curves-for-halo-2-and-beyond/">high 2-adicity</a> for efficient and practical FFT.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>The original implementation of SpartanNIZK uses the curve Curve25519 in its backend; in Spartan-ecdsa, we use the <strong><em>secq256k1 curve</em></strong>. This choice of curve allows us to perform <strong>right-field arithmetic</strong> for ECDSA verification, avoiding the costly range checks that have slowed down previous implementations.</p>
+<h1 id="right-field-arithmetic">Right-field arithmetic</h1>
+<p>In zero-knowledge proving systems, the statements being proven are usually encoded in the <a href="https://zcash.github.io/halo2/background/curves.html#cycles-of-curves">scalar field</a> of an elliptic curve. In ECDSA, these statements are mostly elements in $F_p$, the base field of the secp256k1 curve. In our previous attempt to implement zero-knowledge ECDSA verification using Groth16 with snarkjs, we needed to encode elements in $F_p$ to the scalar field of the BN254 curve, which is smaller than $F_p$. This is called wrong-field arithmetic and introduces an enormous number of constraints to ensure all math is being done correctly.</p>
+<p><strong>However, in Spartan-ecdsa, we encode values in $F_p$ without doing any wrong-field arithmetic by using the secq256k1 curve</strong> which is defined as follows.</p>
+<p>$$
+\begin{aligned}
+y^2 = x^3 +  7 \mod (\mathrm{order\ of\ }F_q) \\
+F_q\mathrm{: scalar\ field\ of\ secp256k1}
+\end{aligned}
+$$</p>
+<p><em>The Sage code in <a href="#appendix-2-secp--secq-cycle-in-sage">appendix 2</a> demonstrates how secp256k1 and secq256k1 relate.</em></p>
+<p>Importantly, secq256k1 has a scalar field order that is exactly the same size as $F_p$, which allows us to do most of the ECDSA arithmetic in <strong><em>right-field</em></strong>. Furthermore, not only we can do arithmetic in right-field , but also since secq256k1 forms a cycle with secp256k1, we can construct recursive proofs using the two curves; recursion allows us to combine multiple proofs into a single proof, without incurring additional costs on verification. This property will be important for building applications like <a href="https://ethdos.xyz/">ETHDos</a>, and also for verifying proofs on blockchains like Ethereum.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<h2 id="tricks-from-efficient-zk-ecdsa">Tricks from efficient-zk-ecdsa</h2>
+<p>Although we are now able to do right-field ECDSA verification by using SpartanNIZK and secq256k1, ECDSA verification consists not only of arithmetic in $F_p$ but also in $F_q$, which is the scalar field of secp256k1 (i.e. the base field of secq256k1).</p>
+<p>However, using the technique from <a href="https://personaelabs.org/posts/efficient-ecdsa-1/">our previous post</a>, we can perform the operations in $F_q$ outside of the circuit without sacrificing privacy. By doing so, we are only left with statements that can be proven in the right-field!</p>
+<h1 id="benchmarks">Benchmarks</h1>
+<h2 id="public-key-group-membership-proof">Public key group membership proof</h2>
+<p>In the Spartan-ecdsa Typescript library, we provide an interface to prove membership in a group of ECDSA public keys, without revealing any information about the proven public key. The approximate benchmark of this proving method is as follows.</p>
+
+
+
+
+
+<table class="table table-condensed">
+<thead>
+<tr>
+<th style="text-align:center">Benchmark</th>
+<th style="text-align:center">#</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Constraints</td>
+<td style="text-align:center">8,076</td>
+</tr>
+<tr>
+<td style="text-align:center">Proving time in browser</td>
+<td style="text-align:center">4s</td>
+</tr>
+<tr>
+<td style="text-align:center">Proving time in Node.js</td>
+<td style="text-align:center">2s</td>
+</tr>
+<tr>
+<td style="text-align:center">Verification time in browser</td>
+<td style="text-align:center">1s</td>
+</tr>
+<tr>
+<td style="text-align:center">Verification time in Node.js</td>
+<td style="text-align:center">300ms</td>
+</tr>
+<tr>
+<td style="text-align:center">Proof size</td>
+<td style="text-align:center">16kb</td>
+</tr>
+</tbody>
+</table>
+
+<ul>
+<li><em>Measured on a M1 MacBook Pro with 80Mbps internet speed</em></li>
+<li><em>Both proving and verification time in browser includes the time to download the circuit</em></li>
+</ul>
+<p>The proving time has improved <strong>by 10x</strong> from <a href="https://github.com/personaelabs/efficient-zk-ecdsa">our previous implementation</a>. We believe that this magnitude of improvement will open the doors for more applications using membership proofs to be developed.</p>
+<p>However, there are yet some difficulties in practice. Let&rsquo;s say you want to create an anonymous forum where you can only post if you own an NFT of a particular collection. First, the Ethereum addresses of the NFT owners must to collected to create a group, which the users can prove membership to. However, even though ownership of an NFT is a public record, <strong>the ECDSA public keys of those addresses are not always accessible.</strong> Since an Ethereum address is a hash of a public key, the public key is only accessible only if at least one transaction has been sent from that Ethereum address; if there is a transaction from the address, the public key can be extracted from the ECDSA signature of the transaction. While if the address has no transaction record, then the public key of that address won&rsquo;t be publically accessible information.</p>
+<p>To counter this issue, in the case of our anonymous form example, <strong>we can require the users to submit their public key when they sign up to the forum, only if the address of the user has never sent a transaction before</strong> (i.e. if the public key of the address is inaccessible) (the user should send their public key using Tor for complete anonymity). The forum adds the submitted public key to the group, so the user can prove membership anonymously. However, <strong>if the user creates a post immediately after they submit their public key, the post and the submitted public key can be linked.</strong> So the forum should only allow the user to make their <strong>first post after some time has passed</strong> (e.g. 24h~), to protect the anonymity of the user.</p>
+<h2 id="ethereum-address-group-membership-proof">Ethereum address group membership proof</h2>
+<p>As shown in the above example, the inaccessibility of public keys requires us to implement a design that might not lead to the best user experience. To counteract this, instead of proving membership to a group of ECDSA public keys, we could prove membership to a group of Ethereum addresses. Spartan-ecdsa provides an interface to do this, which has the following approximate benchmark.</p>
+
+
+
+
+
+<table class="table table-condensed">
+<thead>
+<tr>
+<th style="text-align:center">Benchmark</th>
+<th style="text-align:center">#</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Constraints</td>
+<td style="text-align:center">159,775</td>
+</tr>
+<tr>
+<td style="text-align:center">Proving time in browser</td>
+<td style="text-align:center">60s</td>
+</tr>
+<tr>
+<td style="text-align:center">Proving time in Node.js</td>
+<td style="text-align:center">40s</td>
+</tr>
+<tr>
+<td style="text-align:center">Verification time in browser</td>
+<td style="text-align:center">6s</td>
+</tr>
+<tr>
+<td style="text-align:center">Verification time in Node.js</td>
+<td style="text-align:center">1s</td>
+</tr>
+<tr>
+<td style="text-align:center">Proof size</td>
+<td style="text-align:center">38kb</td>
+</tr>
+</tbody>
+</table>
+
+<ul>
+<li><em>Measured on a M1 MacBook Pro with 80Mbps internet speed</em></li>
+<li><em>Both proving and verification time in browser includes the time to download the circuit</em></li>
+</ul>
+<p>As the benchmark shows, proving membership to an Ethereum address group takes significantly longer. This is because we need to do a Keccak hash to convert a public key into an Ethereum address during proving.</p>
+<p>In some applications, proving can be done in the background while the user does another action (e.g. entering long-form text), which will be a way to manage the long proving time. However, the underlying high cost of proving isn&rsquo;t the best foundation to build a great user experience.</p>
+<p>In summary, Spartan-ecdsa provides two different proving methods with different tradeoffs, for application developers to choose.</p>
+<h1 id="future-work">Future work</h1>
+<h2 id="speeding-up-keccak">Speeding up Keccak</h2>
+<p>Managing a group of Ethereum addresses instead of the inner public keys is easier, and will result in a better user experience. To bring down the proving time in such a setup, we need to reduce the number of Keccak constraints. One possibility is to use the lookup argument. Keccak consists of numerous bitwise XORs, and lookups allow us to arithmetize them in an efficient way.</p>
+<h2 id="on-chain-verification">On-chain verification</h2>
+<p>Although Spartan-ecdsa made a significant leap in prover efficiency for ECDSA verification, the proofs are too large to be verified on blockchains like Ethereum. To do on-chain verification, the proofs need to be further compressed. Fortunately, there is a significant amount of open-source effort being made toward on-chain verifiable proof generation to realize zkEVMs. We imagine Spartan-ecdsa leveraging these efforts to make on-chain proof verification a possibility. Furthermore, as mentioned above, we can also use recursion to combine proofs to make per-proof cost verification lower and to make on-chain verification more affordable.</p>
+<p><strong>Credit roll</strong></p>
+<p>Thanks for reading! Names within each group are sorted alphabetically by first name.</p>
+<ul>
+<li>Contributors: Dan Tehrani, Lakshman Sankar, Vivek Bhupatiraju</li>
+<li>Post writers: Dan Tehrani</li>
+<li>Post reviewers: Vivek Bhupatiraju, Lakshman Sankar</li>
+<li>Upstream work: Nalin Bhardwaj, Srinath Setty</li>
+</ul>
+<hr>
+<h1 id="appendix-1-under-the-hood">Appendix 1: Under the hood</h1>
+<p><em>The following is an incomplete list of the components which comprise Spartan-ecdsa</em>.</p>
+<h2 id="upstream-dependencies">Upstream dependencies</h2>
+<p><strong>Spartan</strong></p>
+<p>We use a fork of Spartan that operates over the secq256k1 curve.</p>
+<p><strong>Circom</strong></p>
+<p>Circom is a language for defining arithmetic circuits. We use a fork of Circom that arithmetize over the secp256k1 base field (i.e. secq256k1 scalar field).</p>
+<p><strong>Nova-Scotia</strong></p>
+<p><a href="https://github.com/nalinbhardwaj/Nova-Scotia">Nova-Scotia</a> is a Circom R1CS compiler developed by <a href="https://twitter.com/nibnalin">Nalin Bhardwaj</a>. We use a fork of Nova-Scotia to compile Circom circuits into a binary format that Spartan can process. We slightly modify Nova-Scotia to be compatible with secq256k1.</p>
+<h2 id="our-implementations">Our implementations</h2>
+<p><strong>Secp256k1 elliptic curve operations in Circom</strong></p>
+<p>The Secp256k1 elliptic curve circuits were inspired by the implementation of the <a href="https://zcash.github.io/halo2/design/gadgets/ecc">Halo2 ECC gadget</a>.</p>
+<p><strong>Secq256k1 hash-to-curve</strong>
+We implement hash-to-curve for the secq256k1 curve, following the specification of <a href="https://www.ietf.org/archive/id/draft-irtf-cfrg-hash-to-curve-10.html">draft-irtf-cfrg-hash-to-curve-10</a>. hash-to-curve is used for generating secure Pedersen commitment generators, which are used in Spartan.</p>
+<p><strong>Poseidon</strong>
+<a href="_https://eprint.iacr.org/2019/458.pdf_">Poseidon</a> is a zk-friendly hash function. We implement and instantiate Poseidon which hashes Secp256k1 field elements. The implementation was inspired by <a href="https://github.com/filecoin-project/neptune">Neptune</a>, a Poseidon implementation from <a href="filecoin.io">Filecoin</a>.</p>
+<h1 id="appendix-2-secpsecq-cycle-in-sage">Appendix 2: Secp/Secq cycle in Sage</h1>
+<pre tabindex="0"><code class="language-background-color: rgb(5, 5, 5)" data-lang="background-color: rgb(5, 5, 5)">p = 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f
+q = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
+
+# Secp256k1
+
+P = GF(p)
+aP = P(0x0000000000000000000000000000000000000000000000000000000000000000)
+bP = P(0x0000000000000000000000000000000000000000000000000000000000000007)
+Secp256k1 = EllipticCurve(P, (aP, bP))
+Secp256k1.set_order(q)
+
+# Secq256k1
+
+Q = GF(q)
+aQ = P(0x0000000000000000000000000000000000000000000000000000000000000000)
+bQ = P(0x0000000000000000000000000000000000000000000000000000000000000007)
+Secq256k1 = EllipticCurve(Q, (aQ, bQ))
+Secq256k1.set_order(p)
+
+print(
+&#34;Secp256k1 group order == Secq256k1 base field order:&#34;,
+Secp256k1.order() == Secq256k1.base_field().cardinality()
+)
+
+print(
+&#34;Secp256k1 base field order == Secq256k1 group order:&#34;,
+Secp256k1.base_field().cardinality() == Secq256k1.order()
+)</code></pre>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>If your field does not have high 2-adicity, you can use <a href="https://eprint.iacr.org/2022/1542">ECFFT</a> as introduced by StarkWare. It is slower in complexity than raw FFT but still far more efficient than naive $O(n^2)$ algorithms. A more gentle overview of the algorithm is provided by William Borgeaud <a href="https://solvable.group/posts/ecfft/">here</a>.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>It is important to note that unlike the <a href="https://electriccoin.co/blog/the-pasta-curves-for-halo-2-and-beyond/">Pasta curves used in Halo2</a>,the secp/secq curve cycle is not FFT friendly. Therefore it is not compatible per se with most of the FFT-based recursive systems unless ECFFTs can be used.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+ </div><div class="flexCenter">
+    <p class="footer text-center">© 2022 Personae Labs</p>
+</div>
+</div>
+    </main>
+  </body>
+</html>

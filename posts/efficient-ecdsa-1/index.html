@@ -11,7 +11,7 @@
 />
 <link rel="stylesheet" type="text/css" href="/css/style.css" />
  
-<title>Efficient ZK ECDSA (1/n)</title>
+<title>Efficient ECDSA &amp; the case for client-side proving</title>
 <link
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css"
@@ -51,18 +51,20 @@
     <meta property="og:url" content="https://personaelabs.org/posts/efficient-ecdsa-1/" />
     <meta
       property="og:title"
-      content="Efficient ZK ECDSA (1/n)"
+      content="Efficient ECDSA &amp; the case for client-side proving"
     />
-    <meta property="og:description" content="This is the first post of a multi-part series on our research improving private ECDSA signature verification, stemming from this ETHResearch post and implemented in this repository. In this post, we motivate our research and review our key insights. In the follow-up, we will provide a full security proof, discuss on-chain extensions, and introduce even faster implementations in proving systems like Halo2 and Nova.
-There will be some math in this post!" />
+    <meta property="og:description" content="In this post, we introduce our research improving private ECDSA signature verification, stemming from this ETHResearch post and implemented in this repository. We also introduce the importance of client-side proving to unlock the full potential of zero-knowledge cryptography.
+There will be some math in this post! It might look scary! But the key insights of the method are simple and should teach you some fun cryptography.
+Motivation ECDSA &amp; ring signatures Client-side proving Notation Key insights Take computation out of the SNARK Precomputing point multiples Off-chain verification To keccak or not to keccak Next up Appendix: half client &amp; half server models Elliptic curve interlude Proving setup Praise &amp; criticism Looking to the future Motivation ECDSA &amp; ring signatures Digital signatures are a key tool in public-key cryptography, where every user $u$ has a public key $pk_u$ and private key $sk_u$." />
     
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="Efficient ZK ECDSA (1/n)"
+      content="Efficient ECDSA &amp; the case for client-side proving"
     />
-    <meta name="twitter:description" content="This is the first post of a multi-part series on our research improving private ECDSA signature verification, stemming from this ETHResearch post and implemented in this repository. In this post, we motivate our research and review our key insights. In the follow-up, we will provide a full security proof, discuss on-chain extensions, and introduce even faster implementations in proving systems like Halo2 and Nova.
-There will be some math in this post!" />
+    <meta name="twitter:description" content="In this post, we introduce our research improving private ECDSA signature verification, stemming from this ETHResearch post and implemented in this repository. We also introduce the importance of client-side proving to unlock the full potential of zero-knowledge cryptography.
+There will be some math in this post! It might look scary! But the key insights of the method are simple and should teach you some fun cryptography.
+Motivation ECDSA &amp; ring signatures Client-side proving Notation Key insights Take computation out of the SNARK Precomputing point multiples Off-chain verification To keccak or not to keccak Next up Appendix: half client &amp; half server models Elliptic curve interlude Proving setup Praise &amp; criticism Looking to the future Motivation ECDSA &amp; ring signatures Digital signatures are a key tool in public-key cryptography, where every user $u$ has a public key $pk_u$ and private key $sk_u$." />
     <meta name="twitter:site" content="@personaelabs" />
 
      
@@ -123,7 +125,7 @@ There will be some math in this post!" />
     </nav>
 </div><div>
         <div id="content">
-<h1>Efficient ZK ECDSA (1/n)</h1>
+<h1>Efficient ECDSA &amp; the case for client-side proving</h1>
 <span> by <b>  Personae  </b> on </span>
  
 <i data-feather="calendar"></i>
@@ -134,7 +136,7 @@ There will be some math in this post!" />
 <a class="btn btn-sm btn-outline-dark tag-btn" href="https://personaelabs.org/tags/cryptography">cryptography</a>
  
  <br /><br />
-<p>This is the first post of a multi-part series on our research improving private ECDSA signature verification, stemming from this <a href="https://ethresear.ch/t/efficient-ecdsa-signature-verification-using-circom/13629">ETHResearch post</a> and implemented in this <a href="https://github.com/personaelabs/efficient-zk-ecdsa">repository</a>. In this post, we motivate our research and review our key insights. In the follow-up, we will provide a full security proof, discuss on-chain extensions, and introduce even faster implementations in proving systems like Halo2 and Nova.</p>
+<p>In this post, we introduce our research improving private ECDSA signature verification, stemming from this <a href="https://ethresear.ch/t/efficient-ecdsa-signature-verification-using-circom/13629">ETHResearch post</a> and implemented in this <a href="https://github.com/personaelabs/efficient-zk-ecdsa">repository</a>. We also introduce the importance of <strong>client-side proving</strong> to unlock the full potential of zero-knowledge cryptography.</p>
 <p>There will be some math in this post! It might look scary! But the key insights of the method are simple and should teach you some fun cryptography.</p>
 <div><nav id="TableOfContents">
   <ul>

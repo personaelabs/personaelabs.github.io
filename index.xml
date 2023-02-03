@@ -6,15 +6,26 @@
     <description>Recent content on Personae Labs</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 30 Nov 2022 22:12:03 +0000</lastBuildDate><atom:link href="https://personaelabs.org/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 14 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://personaelabs.org/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Efficient ZK ECDSA (1/n)</title>
+      <title>Introducing Spartan-ecdsa</title>
+      <link>https://personaelabs.org/posts/spartan-ecdsa/</link>
+      <pubDate>Sat, 14 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://personaelabs.org/posts/spartan-ecdsa/</guid>
+      <description>We introduce Spartan-ecdsa, which to our knowledge is the fastest open-source method to verify secp256k1 ECDSA signatures in zero-knowledge.
+Right-field arithmetic Tricks from efficient-zk-ecdsa Benchmarks Public key group membership proof Ethereum address group membership proof Future work Speeding up Keccak On-chain verification Appendix 1: Under the hood Upstream dependencies Our implementations Appendix 2: Secp/Secq cycle in Sage Spartan-ecdsa is based on the Spartan Non-Interactive Zero-knowledge Proof (SpartanNIZK), which is a proving system in the Spartan zkSNARKs family.</description>
+    </item>
+    
+    <item>
+      <title>Efficient ECDSA &amp; the case for client-side proving</title>
       <link>https://personaelabs.org/posts/efficient-ecdsa-1/</link>
       <pubDate>Wed, 30 Nov 2022 22:12:03 +0000</pubDate>
       
       <guid>https://personaelabs.org/posts/efficient-ecdsa-1/</guid>
-      <description>This is the first post of a multi-part series on our research improving private ECDSA signature verification, stemming from this ETHResearch post and implemented in this repository. In this post, we motivate our research and review our key insights. In the follow-up, we will provide a full security proof, discuss on-chain extensions, and introduce even faster implementations in proving systems like Halo2 and Nova.
-There will be some math in this post!</description>
+      <description>In this post, we introduce our research improving private ECDSA signature verification, stemming from this ETHResearch post and implemented in this repository. We also introduce the importance of client-side proving to unlock the full potential of zero-knowledge cryptography.
+There will be some math in this post! It might look scary! But the key insights of the method are simple and should teach you some fun cryptography.
+Motivation ECDSA &amp;amp; ring signatures Client-side proving Notation Key insights Take computation out of the SNARK Precomputing point multiples Off-chain verification To keccak or not to keccak Next up Appendix: half client &amp;amp; half server models Elliptic curve interlude Proving setup Praise &amp;amp; criticism Looking to the future Motivation ECDSA &amp;amp; ring signatures Digital signatures are a key tool in public-key cryptography, where every user $u$ has a public key $pk_u$ and private key $sk_u$.</description>
     </item>
     
     <item>
